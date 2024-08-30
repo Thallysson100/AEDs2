@@ -44,6 +44,6 @@ int main(){
         elm=aux;              
         aux=elm->ant;
         free(elm);  
-    }
-    return 0;
+    }      
+    return 0;   
 }

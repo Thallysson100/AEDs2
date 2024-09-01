@@ -1,6 +1,5 @@
 #include<stdio.h>
 #include<stdlib.h>
-#include<string.h>
 typedef struct no_{
     int pos[2];
     int jog_inc;

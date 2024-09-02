@@ -91,8 +91,7 @@ int main(){
         }
         int tmp_l=0, tmp_c=0;
         for (i=0; i<10 && labr[tmp_l][tmp_c]!='E'; i++)
-            for (j=0; j<10 && labr[tmp_l][tmp_c]!='E'; j++)
-               if (labr[i][j]=='E'){
+            for (j=0; j<10 && labr[tmp_l][tmp_c]!='E'; j++){
                     tmp_l=i;
                     tmp_c=j;
                }
@@ -103,7 +102,7 @@ int main(){
         pos[0]=tmp_l;
         pos[1]=tmp_c;   
 
-        puts("-------------------------");
+        puts("Caminho da entrada ate a saida:");
         encontrar_caminho(10, 10, labr, pos);
         puts("-------------------------");
     }   

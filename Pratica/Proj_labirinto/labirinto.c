@@ -1,11 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
-typedef struct no_{
-    int pos[2];
-    int jog_inc;
-    int jog_atu;
-    struct no_ *ant;
-}no;
+#include "labirinto.h"
+
 no *inserir_pilha(no *topo, int jog_inc, int *pos, int *tam_pilha){
     no *elm = malloc(sizeof(no));
     elm->pos[0] = pos[0];
@@ -25,7 +21,7 @@ no *remover_pilha(no *topo, int *tam_pilha){
     (*tam_pilha)--;
     return topo;
 }
-void encontrar_caminho(int lin, int col, char labr[lin][col], int *pos_ent){
+void encontrar_caminho(int lin, int col, char **labr, int *pos_ent){
     no *topo = NULL, *aux;
     int i, tam_pilha=0;
     int jogadas[4][2]={{0,1},{1,0},{0,-1},{-1,0}}, temp[2];
@@ -64,47 +60,4 @@ void encontrar_caminho(int lin, int col, char labr[lin][col], int *pos_ent){
     for (int j=0; j<2*tam_pilha; j+=2)
         printf("%d,%d\n", caminho[j], caminho[j+1]);
     free(caminho);
-}
-int main(){
-    char labr[10][10], op;
-    char diretorio[] = "./Labirintos/labirinto-.txt";
-    int i, j, pos[2];
-    FILE *arq;
-    while(1){
-        puts("Digite o numero do labirinto, de 1 a 5; ou 0 para sair");
-        scanf(" %c", &op);
-        if (op=='0')
-            break;
-
-        diretorio[22]=op;
-        arq = fopen(diretorio, "rt");
-        if (arq==NULL){
-            puts("Arquivo nao existe. Tente novamente");
-            continue;
-        }           
-        for (i=0; i<10 && fgets(labr[i], 12, arq)!=NULL; i++);
-        fclose(arq);
-
-        if (i<10){
-        puts("O labirinto não foi lido de forma correta. Tente novamente");
-            continue;            
-        }
-        int tmp_l=0, tmp_c=0;
-        for (i=0; i<10 && labr[tmp_l][tmp_c]!='E'; i++)
-            for (j=0; j<10 && labr[tmp_l][tmp_c]!='E'; j++){
-                    tmp_l=i;
-                    tmp_c=j;
-               }
-        if (labr[tmp_l][tmp_c]!='E'){
-            puts("Labirinto não possui entrada");
-            continue;
-        }
-        pos[0]=tmp_l;
-        pos[1]=tmp_c;   
-
-        puts("Caminho da entrada ate a saida:");
-        encontrar_caminho(10, 10, labr, pos);
-        puts("-------------------------");
-    }   
-    return 0;
 }

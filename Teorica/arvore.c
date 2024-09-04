@@ -27,11 +27,9 @@ noArvore *buscaPai(noArvore *raiz, int k){
         || (raiz->dir!=NULL && raiz->dir->valor==k))
         return raiz;
     if (raiz->valor > k)
-        if (raiz->esq!=NULL)
-            return buscaPai(raiz->esq, k);
+        return buscaPai(raiz->esq, k);
     else
-        if (raiz->dir!=NULL)
-            return buscaPai(raiz->dir, k);
+        return buscaPai(raiz->dir, k);
 }
 noArvore *removeRaiz(noArvore *raiz){
     noArvore *temp=raiz;
@@ -42,12 +40,18 @@ noArvore *removeRaiz(noArvore *raiz){
     else if (raiz->esq==NULL)
         raiz=raiz->dir;
     else{
-        temp = raiz->esq;          //vai para esquerda, depois para
-        while (temp->dir != NULL)  //mais direita possível
-            temp = temp->dir;     
-        raiz->valor = temp->valor;
-        noArvore *pai = buscaPai(raiz, temp->valor);
-        pai->dir=temp->esq;
+        temp=raiz->esq;
+        if (temp->dir==NULL){
+            temp->dir=raiz->dir;
+            free(raiz);
+            return temp;
+        }else{
+            while(temp->dir!=NULL)
+                temp=temp->dir;
+            noArvore *pai = buscaPai(raiz, temp->valor);
+            pai->dir = temp->esq;
+            raiz->valor = temp->valor;
+        }        
     }
     free(temp);
     return raiz;   
@@ -69,35 +73,45 @@ noArvore * removeNo(noArvore * raiz, int valor) {
         }
     return raiz;
 }
-void imprimeArv(noArvore *raiz){
-    if (raiz==NULL) return; 
-    printf("%d ", raiz->valor);   
-    if (raiz->esq!=NULL) imprimeArv(raiz->esq); 
-    
-    if (raiz->dir!=NULL) imprimeArv(raiz->dir);
+void printTree(noArvore *root, int level) {
+    if (root == NULL) {
+        return;
+    }
+
+    // Primeiro, imprimir o lado direito da árvore
+    printTree(root->dir, level + 1);
+
+    // Imprimir o valor do nó com recuo
+    for (int i = 0; i < level; i++) {
+        printf("    "); // Ajuste o número de espaços conforme necessário
+    }
+    printf("%d\n", root->valor);
+
+    // Finalmente, imprimir o lado esquerdo da árvore
+    printTree(root->esq, level + 1);
 }
+
 int main(){
-    int valores[]={5,8,9,3,7,2,6,0,4,1};
+    int valores[]={5,8,3,9,7,1,0,2,4,6};
     noArvore *raiz=NULL, *no;
-    for (int i=0; i<10; i++){
+    for (int i=0; i<sizeof(valores)/sizeof(int); i++){
         no = malloc(sizeof(noArvore));
         no->valor=valores[i];
         no->esq=NULL;
         no->dir=NULL;
         raiz = insereNo(raiz, no);
-        imprimeArv(raiz);
-        puts("");
+        printTree(raiz, 0);
+        puts("---------------------------------------");
     }
     int n;
     noArvore *temp;
     while(1){
         puts("remove:");
         scanf(" %d", &n);
-        removeNo(raiz, n);
-        // temp=buscaPai(raiz, n);
-        // printf("%d", temp->valor);
-        // puts("");
-        imprimeArv(raiz);
+        raiz = removeNo(raiz, n);
+
+        puts("-----------------");
+        printTree(raiz, 0);
         puts("");
     }
     return 0;

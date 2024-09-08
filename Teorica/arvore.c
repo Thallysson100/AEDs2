@@ -40,15 +40,17 @@ noArvore *removeRaiz(noArvore *raiz){
     else if (raiz->esq==NULL)
         raiz=raiz->dir;
     else{
-        temp=raiz->esq;
-        if (temp->dir==NULL){
-            temp->dir=raiz->dir;
+        noArvore *pai = raiz->esq;
+        temp=pai->dir;
+        if (temp==NULL){
+            pai->dir=raiz->dir;
             free(raiz);
-            return temp;
-        }else{
-            while(temp->dir!=NULL)
+            return pai;
+        }else{           
+            while(temp->dir!=NULL){
+                pai=pai->dir;
                 temp=temp->dir;
-            noArvore *pai = buscaPai(raiz, temp->valor);
+            }
             pai->dir = temp->esq;
             raiz->valor = temp->valor;
         }        

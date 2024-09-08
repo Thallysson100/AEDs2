@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 //retorna -1 se a fila estiver cheia
+//f=inicio e r=retaguarda
 int insere(int elm, int *v, int *r, int *f, int tam){
     int retorno = -1;
     int aux = (*r+1)%tam;

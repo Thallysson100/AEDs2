@@ -28,15 +28,15 @@ int main(){
         fclose(arq);
 
         if (i<10){
-        puts("O labirinto não foi lido de forma correta. Tente novamente");
-          for (i=0; i<10; i++)  continue;            
+            puts("O labirinto não foi lido de forma correta. Tente novamente");
+            continue;            
         }
         int tmp_l=0, tmp_c=0;
         for (i=0; i<10 && labr[tmp_l][tmp_c]!='E'; i++)
             for (j=0; j<10 && labr[tmp_l][tmp_c]!='E'; j++){
                     tmp_l=i;
                     tmp_c=j;
-               }
+                }
         if (labr[tmp_l][tmp_c]!='E'){
             puts("Labirinto não possui entrada");
             continue;

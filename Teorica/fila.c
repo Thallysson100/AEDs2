@@ -8,11 +8,11 @@ int insere(int elm, int *v, int *r, int *f, int tam){
     if (aux != *f){
         *r=aux;
         v[*r]= elm;
-        retorno = *r;
         if (*f = -1)
             *f=0;
+        return *r; 
     }
-    return retorno;
+    return -1;
 }
 //retorna null se não conseguir remover da lista
 int* removeL(int *v, int *r, int *f, int tam){

@@ -39,4 +39,4 @@ main.o: main.c $(H_SOURCE)
 	$(CC) -o $@ $< $(CC_FLAGS)
 
 clean:
-	@find . -name '*.o' ! -name '$(PROJ_NAME)' -exec rm -rf {} +
+	rm -rf *.o *~

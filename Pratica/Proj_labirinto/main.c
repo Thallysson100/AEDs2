@@ -13,7 +13,7 @@ int main(){
         labr[i] = malloc(10*sizeof(char));
     
     while(1){
-        puts("Digite o numero do labirinto de 1 a 5 ou 0 para sair");
+        puts("Digite o numero do labirinto de 1 a 10 ou 0 para sair");
         scanf(" %c", &op);
         if (op=='0')
             break;

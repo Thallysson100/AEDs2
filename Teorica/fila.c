@@ -3,12 +3,11 @@
 //retorna -1 se a fila estiver cheia
 //f=inicio e r=retaguarda
 int insere(int elm, int *v, int *r, int *f, int tam){
-    int retorno = -1;
     int aux = (*r+1)%tam;
     if (aux != *f){
-        *r=aux;
-        v[*r]= elm;
-        if (*f = -1)
+        *r = aux;
+        v[*r] = elm;
+        if (*f == -1)
             *f=0;
         return *r; 
     }
@@ -40,18 +39,25 @@ int main(){
         if (op == 1){
             puts("Digite o elemento");
             scanf("%d", &elm);
-            insere(elm, v, &r, &f, tam);
+            if (insere(elm, v, &r, &f, tam)==-1)
+                puts("Fila cheia");
         }
         else{
             Elremovido = removeL(v, &r, &f, tam);
             if (Elremovido!=NULL){
                 printf("\n%d\n", *Elremovido);
                 free(Elremovido);
-            }
+            }else   
+                puts("Fila vazia");
         }
-        for(int i=0; i<tam; i++)
-            printf("%d ", v[i]);       
-        puts("");
+        if (f!=-1){
+            int i=f-1;
+            do{
+                i=(i+1)%tam;
+                printf("%d ", v[i]);
+            }while(i!=r);       
+            puts("");
+        }
        
     }while (op!=0);
 

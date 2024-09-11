@@ -1,54 +1,66 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include "labirinto.h"
-
-int main(){
-    char **labr, op;
-    char diretorio[] = "./Labirintos/labirinto-.txt";
-    int i, j, pos[2];
-    FILE *arq;
-
+#include<string.h>
+/*Ao executar, digite ./labirinto e os números dos labirintos que deseja ler
+separados por espaço. Exemplo: ./labirinto 1 2 3*/
+int main(int argc, char *argv[]){   
+    if (argc<2){
+        puts("Nenhuma instancia passada ao executar o programa");
+        exit(0);
+    }
+    char **labr;
+    //aloca memória para armazenar o labirinto
     labr = malloc(10*sizeof(char*));
-    for (i=0; i<10; i++)
-        labr[i] = malloc(10*sizeof(char));
-    
-    while(1){
-        puts("Digite o numero do labirinto de 1 a 10 ou 0 para sair");
-        scanf(" %c", &op);
-        if (op=='0')
-            break;
+    for (int i=0; i<10; i++)
+        labr[i] = malloc(10*sizeof(char)); 
 
-        diretorio[22]=op;
+    //lê todas as instâncias passadas como argumento ao executar o programa
+    for (int instancia=1; instancia<argc; instancia++){
+        char diretorio[30]= "./Labirintos/labirinto";
+        char str_txt[5] = ".txt";
+
+        /*junta as strings para criar o caminho do diretório onde está o labirinto 
+        expecificado*/
+        strcat(diretorio, argv[instancia]);
+        strcat(diretorio, str_txt);
+
+        printf("Labirinto %s:\n", argv[instancia]);
+
+        FILE *arq; 
         arq = fopen(diretorio, "rt");
         if (arq==NULL){
-            puts("Arquivo nao existe. Tente novamente");
+            printf("%s\n", diretorio);
+            perror("Arquivo nao existente");
             continue;
-        }           
-        for (i=0; i<10 && fgets(labr[i], 12, arq)!=NULL; i++);
-        fclose(arq);
-
-        if (i<10){
-            puts("O labirinto não foi lido de forma correta. Tente novamente");
-            continue;            
         }
+        /*Lê o arquivo já salvando a posição da entrada
+        Por referência, (0,0) é a casa superior esquerda*/
         int tmp_l=0, tmp_c=0;
-        for (i=0; i<10 && labr[tmp_l][tmp_c]!='E'; i++)
-            for (j=0; j<10 && labr[tmp_l][tmp_c]!='E'; j++){
+        for (int i=0; i<10; i++){
+            for (int j=0; j<10; j++){
+                labr[i][j]=getc(arq);
+                if (labr[i][j]=='E'){
                     tmp_l=i;
                     tmp_c=j;
                 }
+            }
+            getc(arq); //lê a quebra de linha do arquivo para ser ignorada
+        }
+        fclose(arq);
+
+        //caso não achar a entrada
         if (labr[tmp_l][tmp_c]!='E'){
             puts("Labirinto não possui entrada");
             continue;
         }
-        pos[0]=tmp_l;
-        pos[1]=tmp_c;   
 
-        puts("Caminho da entrada ate a saida:");
+        int pos[2]= {tmp_l, tmp_c};
         encontrar_caminho(10, 10, labr, pos);
-        puts("-------------------------");
+        puts("---------------------");
     }
-    for (i=0; i<10; i++)
+    //libera a memória alocada para o labirinto
+    for (int i=0; i<10; i++)
         free(labr[i]);
     free(labr);
     return 0;

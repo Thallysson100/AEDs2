@@ -1,21 +1,17 @@
 #include<stdio.h>
 #include<stdlib.h>
-#include "labirinto.h"
-//Na pilha, cada elemento representa um movimento realizado no labirinto
-
-/*Função de inserção da pilha de jogadas. Recebe o ponteiro do topo,
-a jogada inicial, o vetor de posição, e o ponteiro da variável
-que armazena o tamanho da pilha. Retorna o novo ponteiro do topo*/
+typedef struct no_{
+    int pos[2];
+    int jog_inc;
+    int jog_atu;
+    struct no_ *ant;
+}no;
 no *inserir_pilha(no *topo, int jog_inc, int *pos, int *tam_pilha){
     no *elm = malloc(sizeof(no));
-    //insere a posição de referência do novo movimento 
     elm->pos[0] = pos[0];
     elm->pos[1] = pos[1];
-    //insere qual jogada não irá ser testada para realizar o próximo movimento
     elm->jog_inc = jog_inc;
-    //inicializa a jogada atual
     elm->jog_atu = jog_inc;
-
     elm->ant = topo;
     (*tam_pilha)++;
     
@@ -29,7 +25,7 @@ no *remover_pilha(no *topo, int *tam_pilha){
     (*tam_pilha)--;
     return topo;
 }
-void encontrar_caminho(int lin, int col, char **labr, int *pos_ent){
+void encontrar_caminho(int lin, int col, char labr[lin][col], int *pos_ent){
     no *topo = NULL, *aux;
     int i, tam_pilha=0;
     int jogadas[4][2]={{0,1},{1,0},{0,-1},{-1,0}}, temp[2];
@@ -68,4 +64,16 @@ void encontrar_caminho(int lin, int col, char **labr, int *pos_ent){
     for (int j=0; j<2*tam_pilha; j+=2)
         printf("%d,%d\n", caminho[j+1], caminho[j]);
     free(caminho);
+}
+int main(){
+    char labr[5][5]={
+        {"EXXXX"},
+        {"000XX"},
+        {"0X00S"},
+        {"X00XX"},
+        {"X0XXX"},
+    };
+    int pos[2]={0,0};
+    encontrar_caminho(5,5,labr,pos);
+    return 0;
 }

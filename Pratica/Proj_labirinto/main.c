@@ -34,8 +34,7 @@ int main(int argc, char *argv[]){
             perror("Arquivo nao existente");
             continue;
         }
-        /*Lê o arquivo já salvando a posição da entrada
-        Por referência, (0,0) é a casa superior esquerda*/
+        //Lê o arquivo já salvando a posição da entrada
         int tmp_l=0, tmp_c=0;
         for (int i=0; i<10; i++){
             for (int j=0; j<10; j++){

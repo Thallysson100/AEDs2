@@ -87,6 +87,7 @@ void encontrar_caminho(int lin, int col, char **labr, int *pos_ent){
     topo->prox = NULL;
     while(fundo != NULL){
         aux=fundo;
+        //imprime na forma padronizada
         printf("%d,%d\n", fundo->pos[1], lin-1-fundo->pos[0]);
         fundo=fundo->prox;
         free(aux); //vai liberando os elementos da pilha

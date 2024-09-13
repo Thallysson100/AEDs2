@@ -6,7 +6,9 @@
 separados por espaço. Exemplo: ./labirinto 1 2 3*/
 int main(int argc, char *argv[]){   
     if (argc<2){
-        puts("Nenhuma instancia passada ao executar o programa");
+        puts("Nenhuma instancia passada ao executar o programa."); 
+        puts("Ao executar, digite ./labirinto e os numeros dos labirintos");
+        puts("que deseja ler separados por espaco. Exemplo: ./labirinto 1 2 3");
         exit(0);
     }
     char **labr;
@@ -24,16 +26,15 @@ int main(int argc, char *argv[]){
         expecificado*/
         strcat(diretorio, argv[instancia]);
         strcat(diretorio, str_txt);
-
-        printf("Labirinto %s:\n", argv[instancia]);
-
         FILE *arq; 
         arq = fopen(diretorio, "rt");
         if (arq==NULL){
             printf("%s\n", diretorio);
             perror("Arquivo nao existente");
+            puts("---------------------");
             continue;
         }
+        printf("Caminho do labirinto %s:\n", argv[instancia]);
         //Lê o arquivo já salvando a posição da entrada
         int tmp_l=0, tmp_c=0;
         for (int i=0; i<10; i++){

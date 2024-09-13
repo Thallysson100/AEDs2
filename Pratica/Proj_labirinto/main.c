@@ -2,8 +2,6 @@
 #include<stdlib.h>
 #include "labirinto.h"
 #include<string.h>
-/*Ao executar, digite ./labirinto e os números dos labirintos que deseja ler
-separados por espaço. Exemplo: ./labirinto 1 2 3*/
 int main(int argc, char *argv[]){   
     if (argc<2){
         puts("Nenhuma instancia passada ao executar o programa."); 

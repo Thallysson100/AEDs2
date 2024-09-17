@@ -1,5 +1,3 @@
-# Automatizando o makefile
-
 # Nome do projeto
 PROJ_NAME=labirinto
 

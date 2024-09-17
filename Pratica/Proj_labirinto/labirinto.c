@@ -28,11 +28,13 @@ mov *remover_pilha(mov *topo){
     return topo;
 }
 
+/*Função de encontrar o caminho, recebe o número de linhas e colunas do labirinto,
+o ponteiro referente a ele e a posição da entrada*/
 void encontrar_caminho(int lin, int col, char **labr, int *pos_ent){
     mov *topo = NULL, *aux, *fundo;
     int i, temp[2];
 
-    //a posição (0,0) é a casa superior direita
+    //a posição (0,0) é a casa superior esquerda
     int jogadas[4][2]={{0,1},  //jogada 0: mover para direita
                        {1,0},  //jogada 1: mover para cima
                        {0,-1}, //jogada 2: mover para esquerda
@@ -69,7 +71,7 @@ void encontrar_caminho(int lin, int col, char **labr, int *pos_ent){
         //caso contrário, um novo movimento é realizado  
         else{
             /*salva qual deve ser a jogada que o loop "for" deve começar
-            para testar as jogadas restantes*/
+            para testar as jogadas restantes caso seja necessário*/
             topo->jog_atu = (i+1)%4; 
 
             /*se uma jogada válida é realizada, no próximo
@@ -83,7 +85,8 @@ void encontrar_caminho(int lin, int col, char **labr, int *pos_ent){
         puts("Labirinto sem saida!");
         return;
     }
-    //o caminho da entrada até saída é a impressão das posições do fundo até o topo 
+    /*o caminho da entrada até saída é a impressão das posições 
+    dos movimentos do fundo até o topo da pilha*/ 
     topo->prox = NULL;
     while(fundo != NULL){
         aux=fundo;

@@ -15,12 +15,10 @@ CC=gcc
 
 # Flags (opções) para o compilador
 CC_FLAGS = -c         \
-           -W         \
+           -O2        \
            -Wall      \
-           -ansi      \
-           -pedantic  \
-           -O3        \
-           -std=c99
+           -Wpedantic \
+           -Wextra    \
 
 #########################
 # Compilação e linkagem #

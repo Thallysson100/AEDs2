@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<stdbool.h>
 #include "labirinto.h"
 /*Na pilha duplamente encadeada, cada elemento 
 representa um movimento realizado no labirinto*/
@@ -33,8 +34,14 @@ o ponteiro referente a ele e a posição da entrada*/
 void encontrar_caminho(int lin, int col, char **labr, int *pos_ent){
     mov *topo = NULL, *aux, *fundo;
     int i, temp[2];
+    /*matrix que representa quais casas estão sendo consideradas no momento
+    como caminho da entrada até a saída, é necessário para evitar que
+    o algoritmo entre neste mesmo caminho para evitar um loop infinito*/
+    bool **ja_passou = malloc(10*sizeof(bool*));
+    for (int i=0; i<10; i++)
+        ja_passou[i] = calloc(10, sizeof(bool));
 
-    //a posição (0,0) é a casa superior esquerda
+    //a posição (0,0) é a casa superior direita
     int jogadas[4][2]={{0,1},  //jogada 0: mover para direita
                        {1,0},  //jogada 1: mover para cima
                        {0,-1}, //jogada 2: mover para esquerda
@@ -58,41 +65,48 @@ void encontrar_caminho(int lin, int col, char **labr, int *pos_ent){
 
             /*caso a jogada for um movimento possível, ou seja, 
             caso a jogada resulta em uma casa dentro do labirinto que não seja
-            uma parede, o teste é interrompido*/
+            uma parede e que ainda não foi passada, o teste é interrompido*/
             if (temp[0]>=0 && temp[0]<lin && temp[1]>=0 && temp[1]<col &&
-               labr[temp[0]][temp[1]]!='X')
+               labr[temp[0]][temp[1]]!='X' && !(ja_passou[temp[0]][temp[1]]))
                 break;        
         }
         /*caso todas as jogadas foram testadas e não foi encontrada uma válida,
         é voltado um movimento e é testado as jogadas restantes do movimento anterior*/
-        if (i==topo->nao_testar_jog)
+        if (i==topo->nao_testar_jog){
+            //desconsidera a posição atual como parte do caminho 
+            ja_passou[topo->pos[0]][topo->pos[1]] = false;
             topo = remover_pilha(topo);
-
+            
         //caso contrário, um novo movimento é realizado  
-        else{
+        }else{
             /*salva qual deve ser a jogada que o loop "for" deve começar
-            para testar as jogadas restantes caso seja necessário*/
+            para testar as jogadas restantes*/
             topo->jog_atu = (i+1)%4; 
+            //considera a posição atual como parte do caminho 
+            ja_passou[topo->pos[0]][topo->pos[1]] = true;
 
             /*se uma jogada válida é realizada, no próximo
             movimento não pode ser testado a posição do movimento anterior,
             por isso "nao_testa_jog" inicia com a inversa da jogada realizada*/
             topo = inserir_pilha(topo, (i+2)%4, temp);  
-        }          
+        }
+        
     }
     //caso voltar todos os movimentos sem encontrar uma saída
     if (topo==NULL){
         puts("Labirinto sem saida!");
         return;
     }
-    /*o caminho da entrada até saída é a impressão das posições 
-    dos movimentos do fundo até o topo da pilha*/ 
+    //o caminho da entrada até saída é a impressão das posições do fundo até o topo 
     topo->prox = NULL;
     while(fundo != NULL){
         aux=fundo;
-        //imprime na forma padronizada
         printf("%d,%d\n", fundo->pos[1], lin-1-fundo->pos[0]);
         fundo=fundo->prox;
-        free(aux); //vai liberando os elementos da pilha
+        free(aux); //vai liberando os elementos da pilha      
     }
+    //libera a matriz do caminho          
+    for (int i=0; i<10; i++)
+        free(ja_passou[i]);
+    free(ja_passou);
 }

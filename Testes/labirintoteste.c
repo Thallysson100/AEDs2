@@ -1,5 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
+#include<stdbool.h>
 typedef struct mov_{ 
     int pos[2];    //recebe a posição de referência do movimento      
     int nao_testar_jog; //recebe qual jogada não deve ser testada 
@@ -32,6 +34,12 @@ mov *remover_pilha(mov *topo){
 void encontrar_caminho(int lin, int col, char **labr, int *pos_ent){
     mov *topo = NULL, *aux, *fundo;
     int i, temp[2];
+    /*matrix que representa quais casas estão sendo consideradas no momento
+    como caminho da entrada até a saída, é necessário para evitar que
+    o algoritmo entre neste mesmo caminho, assim resultando em loop infinito*/
+    bool **ja_passou = malloc(10*sizeof(bool*));
+    for (int i=0; i<10; i++)
+        ja_passou[i]=calloc(10, sizeof(bool));
 
     //a posição (0,0) é a casa superior direita
     int jogadas[4][2]={{0,1},  //jogada 0: mover para direita
@@ -57,27 +65,32 @@ void encontrar_caminho(int lin, int col, char **labr, int *pos_ent){
 
             /*caso a jogada for um movimento possível, ou seja, 
             caso a jogada resulta em uma casa dentro do labirinto que não seja
-            uma parede, o teste é interrompido*/
+            uma parede e que ainda não foi passada, o teste é interrompido*/
             if (temp[0]>=0 && temp[0]<lin && temp[1]>=0 && temp[1]<col &&
-               labr[temp[0]][temp[1]]!='X')
+               labr[temp[0]][temp[1]]!='X' && !(ja_passou[temp[0]][temp[1]]))
                 break;        
         }
         /*caso todas as jogadas foram testadas e não foi encontrada uma válida,
         é voltado um movimento e é testado as jogadas restantes do movimento anterior*/
-        if (i==topo->nao_testar_jog)
+        if (i==topo->nao_testar_jog){
+            //desconsidera a posição atual como parte do caminho 
+            ja_passou[topo->pos[0]][topo->pos[1]] = false;
             topo = remover_pilha(topo);
-
+            
         //caso contrário, um novo movimento é realizado  
-        else{
+        }else{
             /*salva qual deve ser a jogada que o loop "for" deve começar
             para testar as jogadas restantes*/
             topo->jog_atu = (i+1)%4; 
+            //considera a posição atual como parte do caminho 
+            ja_passou[topo->pos[0]][topo->pos[1]] = true;
 
             /*se uma jogada válida é realizada, no próximo
             movimento não pode ser testado a posição do movimento anterior,
             por isso "nao_testa_jog" inicia com a inversa da jogada realizada*/
             topo = inserir_pilha(topo, (i+2)%4, temp);  
-        }          
+        }
+        
     }
     //caso voltar todos os movimentos sem encontrar uma saída
     if (topo==NULL){
@@ -86,60 +99,74 @@ void encontrar_caminho(int lin, int col, char **labr, int *pos_ent){
     }
     //o caminho da entrada até saída é a impressão das posições do fundo até o topo 
     topo->prox = NULL;
+    ja_passou[topo->pos[0]][topo->pos[1]] = true;
     while(fundo != NULL){
         aux=fundo;
         printf("%d,%d\n", fundo->pos[1], lin-1-fundo->pos[0]);
         fundo=fundo->prox;
-        free(aux); //vai liberando os elementos da pilha
+        free(aux); //vai liberando os elementos da pilha      
     }
+    puts("");
+    for (int i=0; i<10; i++){
+    for (int j=0; j<10; j++)
+        printf("%d", ja_passou[i][j] ? 1 : 0);
+    puts("");
+    }          
+    for (int i=0; i<10; i++)
+            free(ja_passou[i]);
+        free(ja_passou);
 }
-int main(){
-    char **labr, op;
-    char diretorio[] = "./Labirintos/labirinto-.txt";
-    int i, j, pos[2];
-    FILE *arq;
-
-    labr = malloc(10*sizeof(char*));
-    for (i=0; i<10; i++)
-        labr[i] = malloc(10*sizeof(char));
-    
-    while(1){
-        puts("Digite o numero do labirinto de 1 a 10 ou 0 para sair");
-        scanf(" %c", &op);
-        if (op=='0')
-            break;
-
-        diretorio[22]=op;
-        arq = fopen(diretorio, "rt");
-        if (arq==NULL){
-            puts("Arquivo nao existe. Tente novamente");
-            continue;
-        }           
-        for (i=0; i<10 && fgets(labr[i], 12, arq)!=NULL; i++);
-        fclose(arq);
-
-        if (i<10){
-            puts("O labirinto não foi lido de forma correta. Tente novamente");
-            continue;            
-        }
-        int tmp_l=0, tmp_c=0;
-        for (i=0; i<10 && labr[tmp_l][tmp_c]!='E'; i++)
-            for (j=0; j<10 && labr[tmp_l][tmp_c]!='E'; j++){
-                    tmp_l=i;
-                    tmp_c=j;
-                }
-        if (labr[tmp_l][tmp_c]!='E'){
-            puts("Labirinto não possui entrada");
-            continue;
-        }
-        pos[0]=tmp_l;
-        pos[1]=tmp_c;   
-
-        puts("Caminho da entrada ate a saida:");
-        encontrar_caminho(10, 10, labr, pos);
-        puts("-------------------------");
+int main(int argc, char *argv[]){   
+    if (argc<2){
+        puts("Nenhuma instancia passada ao executar o programa."); 
+        puts("Ao executar, digite ./labirinto x, sendo x o numero do labirinto");
+        exit(0);
     }
-    for (i=0; i<10; i++)
+
+    //aloca memória para armazenar o labirinto
+    char **labr;
+    labr = malloc(10*sizeof(char*));
+    for (int i=0; i<10; i++)
+        labr[i] = malloc(10*sizeof(char)); 
+
+    char diretorio[32]= "./Labirintos/labirinto";
+    char str_txt[5] = ".txt";
+    /*junta as strings para criar o caminho do diretório onde está o labirinto     
+      expecificado*/
+    strcat(diretorio, argv[1]);   
+    strcat(diretorio, str_txt);
+    FILE *arq; 
+    arq = fopen(diretorio, "rt");
+    if (arq==NULL){
+        printf("%s\n", diretorio);
+        perror("Arquivo nao existente");
+        exit(0);
+    }
+    //Lê o arquivo já salvando a posição da entrada
+    int tmp_l=0, tmp_c=0;
+    for (int i=0; i<10; i++){
+        for (int j=0; j<10; j++){
+            labr[i][j]=getc(arq);
+            if (labr[i][j]=='E'){
+                tmp_l=i;
+                tmp_c=j;
+            }
+        }
+        getc(arq); //lê a quebra de linha do arquivo para ser ignorada
+    }
+    fclose(arq);
+
+    //caso não achar a entrada
+    if (labr[tmp_l][tmp_c]!='E'){
+        puts("Labirinto não possui entrada");
+        exit(0);
+    }
+
+    int pos[2]= {tmp_l, tmp_c};
+    encontrar_caminho(10, 10, labr, pos);
+    
+    //libera a memória alocada para o labirinto
+    for (int i=0; i<10; i++)
         free(labr[i]);
     free(labr);
     return 0;

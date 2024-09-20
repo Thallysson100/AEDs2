@@ -36,7 +36,7 @@ void encontrar_caminho(int lin, int col, char **labr, int *pos_ent){
     int i, temp[2];
     /*matrix que representa quais casas estão sendo consideradas no momento
     como caminho da entrada até a saída, é necessário para evitar que
-    o algoritmo entre neste mesmo caminho para evitar um loop infinito*/
+    o algoritmo entre neste mesmo caminho, o que resultaria em loop infinito*/
     bool **ja_passou = malloc(10*sizeof(bool*));
     for (int i=0; i<10; i++)
         ja_passou[i] = calloc(10, sizeof(bool));
@@ -65,7 +65,7 @@ void encontrar_caminho(int lin, int col, char **labr, int *pos_ent){
 
             /*caso a jogada for um movimento possível, ou seja, 
             caso a jogada resulta em uma casa dentro do labirinto que não seja
-            uma parede e que ainda não foi passada, o teste é interrompido*/
+            uma parede e que não esteja dentro do caminho, o teste é interrompido*/
             if (temp[0]>=0 && temp[0]<lin && temp[1]>=0 && temp[1]<col &&
                labr[temp[0]][temp[1]]!='X' && !(ja_passou[temp[0]][temp[1]]))
                 break;        

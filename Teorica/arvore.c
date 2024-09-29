@@ -33,46 +33,41 @@ noArvore *buscaPai(noArvore *raiz, int k){
 }
 noArvore *removeRaiz(noArvore *raiz){
     noArvore *temp=raiz;
-    if (raiz==NULL)
+    if (!raiz)
         return raiz;
-    if (raiz->dir==NULL)
+    if (!raiz->dir)
         raiz=raiz->esq;
-    else if (raiz->esq==NULL)
+    else if (!raiz->esq)
         raiz=raiz->dir;
     else{
         noArvore *pai = raiz->esq;
         temp=pai->dir;
-        if (temp==NULL){
+        if (!temp){
             pai->dir=raiz->dir;
             free(raiz);
             return pai;
-        }else{           
-            while(temp->dir!=NULL){
-                pai=pai->dir;
-                temp=temp->dir;
-            }
-            pai->dir = temp->esq;
-            raiz->valor = temp->valor;
-        }        
+        }
+
+        while(temp->dir){
+            pai=pai->dir;
+            temp=temp->dir;
+        }
+        pai->dir = temp->esq;
+        raiz->valor = temp->valor;                
     }
     free(temp);
     return raiz;   
 }
 
-noArvore * removeNo(noArvore * raiz, int valor) {
-    noArvore * n = busca(raiz, valor); //checa se o noh existe
-        if (n) {
-            noArvore * pai = buscaPai(raiz, n->valor); //descobre quem eh o noh pai
-            if (pai) { //caso tenha noh pai
-                if (pai->dir == n) //noh a ser removido eh filho a direita
-                    pai->dir = removeRaiz(n);
-                else //noh a ser removido eh filho a esquerda
-                    pai->esq = removeRaiz(n);
-
-            } else { //nao possui pai, logo, eh o proprio noh raiz
-                raiz = removeRaiz(n);
-                }
-        }
+noArvore *removeNo(noArvore *raiz, int valor){
+    if (!raiz)
+        return raiz;
+    if (valor < raiz->valor)
+        raiz->esq = removeNo(raiz->esq, valor);
+    else if (valor > raiz->valor)
+        raiz->dir = removeNo(raiz->dir, valor);
+    else
+        raiz = removeRaiz(raiz);
     return raiz;
 }
 void printTree(noArvore *root, int level) {

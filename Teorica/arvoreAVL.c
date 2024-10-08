@@ -5,27 +5,27 @@ typedef struct noArvoreAVL_{
     int valor;
     struct noArvoreAVL_ *esq;
     struct noArvoreAVL_ *dir;
-    int nivel;
+    int altura;
 }noArvoreAVL;
-int nivelNo(noArvoreAVL *no){
-    return (no) ? no->nivel : 0;
+int alturaNo(noArvoreAVL *no){
+    return (no) ? no->altura : 0;
 }
-int calculaNivel(noArvoreAVL *no){
-    int nivelDir = nivelNo(no->dir);
-    int nivelEsq = nivelNo(no->esq);
-    return (nivelDir >= nivelEsq) ? nivelDir+1 : nivelEsq+1;
+int calculaAltura(noArvoreAVL *no){
+    int alturaDir = alturaNo(no->dir);
+    int alturaEsq = alturaNo(no->esq);
+    return (alturaDir >= alturaEsq) ? alturaDir+1 : alturaEsq+1;
 }
 int calculaBalance(noArvoreAVL *no){
-    int nivelDir = nivelNo(no->dir);
-    int nivelEsq = nivelNo(no->esq);
-    return nivelEsq-nivelDir;
+    int alturaDir = alturaNo(no->dir);
+    int alturaEsq = alturaNo(no->esq);
+    return alturaEsq-alturaDir;
 }
 noArvoreAVL *RSE(noArvoreAVL *raiz){
     noArvoreAVL *direita = raiz->dir;
     raiz->dir = direita->esq;
     direita->esq = raiz;
-    raiz->nivel = calculaNivel(raiz);
-    direita->nivel = calculaNivel(direita);
+    raiz->altura = calculaAltura(raiz);
+    direita->altura = calculaAltura(direita);
     return direita;
 }
 
@@ -33,8 +33,8 @@ noArvoreAVL *RSD(noArvoreAVL *raiz){
     noArvoreAVL *esquerda = raiz->esq;
     raiz->esq = esquerda->dir;
     esquerda->dir = raiz;
-    raiz->nivel = calculaNivel(raiz);
-    esquerda->nivel = calculaNivel(esquerda);
+    raiz->altura = calculaAltura(raiz);
+    esquerda->altura = calculaAltura(esquerda);
     return esquerda;
 }
 //+ vai pra esquerda, rotaciona direita
@@ -53,7 +53,7 @@ noArvoreAVL *rotaciona_insere(noArvoreAVL *raiz, int fator_balance){
 }
 noArvoreAVL *insereNoAVL(noArvoreAVL *raiz, noArvoreAVL *no){
     if (!raiz){
-        no->nivel = calculaNivel(no);
+        no->altura = calculaAltura(no);
         return no;
     }
     if (raiz->valor > no->valor)
@@ -64,7 +64,7 @@ noArvoreAVL *insereNoAVL(noArvoreAVL *raiz, noArvoreAVL *no){
     int fator_balance = calculaBalance(raiz);
     if (abs(fator_balance)>1)
         raiz = rotaciona_insere(raiz, fator_balance);
-    raiz->nivel = calculaNivel(raiz);
+    raiz->altura = calculaAltura(raiz);
 
     return raiz;
 }
@@ -79,7 +79,7 @@ int pegaMaisDireira(noArvoreAVL *raiz){
         valor = temp->valor;
         free(temp);
     }
-    raiz->nivel = calculaNivel(raiz);
+    raiz->altura = calculaAltura(raiz);
     return valor;
 }
 
@@ -94,10 +94,10 @@ noArvoreAVL *removeRaizAVL(noArvoreAVL *raiz){
     else if (!raiz->esq->dir){
         raiz->esq->dir = raiz->dir;
         raiz = raiz->esq;
-        raiz->nivel = calculaNivel(raiz);
+        raiz->altura = calculaAltura(raiz);
     }else{
         raiz->valor = pegaMaisDireira(raiz->esq);
-        raiz->nivel = calculaNivel(raiz);
+        raiz->altura = calculaAltura(raiz);
         return raiz;
     }
     free(temp);
@@ -108,37 +108,27 @@ da remoção é diferente da inserção*/
 noArvoreAVL *rotaciona_remove(noArvoreAVL *raiz){
     noArvoreAVL *esquerda = raiz->esq;
     noArvoreAVL *direita = raiz->dir;
-    int nivelEsq = nivelNo(esquerda);
-    int nivelDir = nivelNo(direita);
-    //caso o filho de esquerda tenha o maior nivel 
-    if (nivelEsq > nivelDir){
-        nivelEsq = nivelNo(esquerda->esq);
-        nivelDir = nivelNo(esquerda->dir);
+    //caso o filho de esquerda tenha o maior altura 
+    if (alturaNo(esquerda) > alturaNo(direita)){       
         //é realizada uma rotação dupla somente em caso obrigatório
-        if (nivelDir > nivelEsq) 
-            raiz->esq = RSE(raiz->esq);
+        if (alturaNo(esquerda->esq) < alturaNo(esquerda->dir)) 
+            raiz->esq = RSE(esquerda);
         return RSD(raiz);
-
-    }else if(nivelEsq < nivelDir){
-        //faz o mesmo porém com filho da direita caso ele tenha a maior altura
-        nivelEsq = nivelNo(direita->esq);
-        nivelDir = nivelNo(direita->dir); 
-        if (nivelDir < nivelEsq) 
-            raiz->dir = RSD(raiz->dir);
+    
+    //faz o mesmo porém com filho da direita caso ele tenha a maior altura
+    }else if (alturaNo(esquerda) < alturaNo(direita)){
+        if (alturaNo(direita->esq) > alturaNo(direita->dir)) 
+            raiz->dir = RSD(direita);
         return RSE(raiz);
     }
     /*caso os filhos possuem niveis iguais, é priorizado uma rotação simples
     (rotação no caminho esquerda esquerda ou direita direita)*/
-    nivelEsq = nivelNo(esquerda->esq);
-    nivelDir = nivelNo(esquerda->dir);
-    if(nivelDir <= nivelEsq)
+    if (alturaNo(esquerda->esq) > alturaNo(esquerda->dir))
         return RSD(raiz); //rotação direita direita
 
-    nivelEsq = nivelNo(direita->esq);
-    nivelDir = nivelNo(direita->dir);
     //é realizada uma rotação dupla somente em caso obrigatório
-    if(nivelDir < nivelEsq)
-        raiz->dir = RSD(raiz->dir); 
+    if (alturaNo(direita->esq) > alturaNo(direita->dir))
+        raiz->dir = RSD(direita); 
     return RSE(raiz);    
 }
 noArvoreAVL *removeNoAVL(noArvoreAVL *raiz, int valor){
@@ -154,23 +144,23 @@ noArvoreAVL *removeNoAVL(noArvoreAVL *raiz, int valor){
     if (raiz){
         if (abs(calculaBalance(raiz))>1)
             raiz = rotaciona_remove(raiz);
-        raiz->nivel = calculaNivel(raiz);
+        raiz->altura = calculaAltura(raiz);
     }
 
     return raiz;   
 }
 
 
-void printTree(noArvoreAVL *raiz, int nivel, FILE *arq) {
+void printTree(noArvoreAVL *raiz, int altura, FILE *arq) {
      if (!raiz) 
          return;
-    printTree(raiz->dir, nivel + 1, arq);
+    printTree(raiz->dir, altura + 1, arq);
 
-    for (int i = 0; i < nivel; i++)
+    for (int i = 0; i < altura; i++)
         fputs("      ", arq);  
     fprintf(arq, "%d\n", raiz->valor);
 
-    printTree(raiz->esq, nivel + 1, arq);
+    printTree(raiz->esq, altura + 1, arq);
 }
 void liberaArvore(noArvoreAVL *raiz){
     if (!raiz)
@@ -184,8 +174,8 @@ void liberaArvore(noArvoreAVL *raiz){
 
 int main(int arqc, char *arqv[]){
     if (arqc<2){
-        puts("digite quantos elementos vc quer que");
-        puts("a arvore tenha hora de executar (./arvore x)");
+        puts("digite quantos elementos vc quer que a arvore");
+        puts("tenha na hora de executar (./arvore x)");
         exit(0);
     }
     srand(time(NULL));

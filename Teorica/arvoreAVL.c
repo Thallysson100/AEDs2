@@ -121,15 +121,6 @@ noArvoreAVL *rotaciona_remove(noArvoreAVL *raiz){
             raiz->dir = RSD(direita);
         return RSE(raiz);
     }
-    /*caso os filhos possuem niveis iguais, é priorizado uma rotação simples
-    (rotação no caminho esquerda esquerda ou direita direita)*/
-    if (alturaNo(esquerda->esq) > alturaNo(esquerda->dir))
-        return RSD(raiz); //rotação direita direita
-
-    //é realizada uma rotação dupla somente em caso obrigatório
-    if (alturaNo(direita->esq) > alturaNo(direita->dir))
-        raiz->dir = RSD(direita); 
-    return RSE(raiz);    
 }
 noArvoreAVL *removeNoAVL(noArvoreAVL *raiz, int valor){
     if (!raiz)
@@ -149,7 +140,6 @@ noArvoreAVL *removeNoAVL(noArvoreAVL *raiz, int valor){
 
     return raiz;   
 }
-
 
 void printTree(noArvoreAVL *raiz, int altura, FILE *arq) {
      if (!raiz) 
@@ -174,8 +164,7 @@ void liberaArvore(noArvoreAVL *raiz){
 
 int main(int arqc, char *arqv[]){
     if (arqc<2){
-        puts("digite quantos elementos vc quer que a arvore");
-        puts("tenha na hora de executar (./arvore x)");
+        puts("digite ./arvore x na hora de executar, sendo x o numero de elementos da arvore");
         exit(0);
     }
     srand(time(NULL));
@@ -203,7 +192,7 @@ int main(int arqc, char *arqv[]){
         printTree(raiz, 0, arq);
         fputs("---------------------------------------\n", arq);
     }
-    puts("Olha no arquivo saida");
+    puts("Olhe em saida_arvore.txt");
     for (int i=0; i<tam; i++){
         random = rand()%tam;
         aux=valores[i];

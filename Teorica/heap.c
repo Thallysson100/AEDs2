@@ -9,15 +9,6 @@ void swap(int *a, int *b){
     *a = *b;
     *b = temp;
 }
-int pai(int indice){
-    return (indice-1)>>1;
-}
-int filhoEsq(int indice){
-    return indice<<1+1;
-}
-int filhoDir(int indice){
-    return indice<<1+2;
-}
 int insereHeap(heap arv, int tam_atu, int valor){
     if (tam_atu >= tam)
         return -1;
@@ -29,7 +20,7 @@ int insereHeap(heap arv, int tam_atu, int valor){
     ate achar um certo ou chegar na raiz*/
     while (i!=0 && arv[pai(i)] > arv[i]){
         swap(&arv[pai(i)], &arv[i]);
-        i = pai(i);
+        i = (i-1)>>1; //i = pai do i
     }
     return 0;
 }
@@ -43,11 +34,12 @@ int removeHeap(heap arv, int tam_atu, int valor){
         
     tam_atu--;
     arv[0] = arv[tam_atu];
-    int esq, dir, min = 0, i = 0;
+    int esq, dir, min = 0, i = 0, flag;
     
     do{
-        esq = filhoEsq(i);
-        dir = filhoDir(i);
+        flag = 0;
+        esq = (i<<1)+1; //filho a esquerda de i
+        dir = (i<<1)+2; //flho a direita de i
         if (arv[esq] < arv[i])
             min = esq;
         if (arv[dir] < arv[min])
@@ -55,8 +47,9 @@ int removeHeap(heap arv, int tam_atu, int valor){
         if (min != i){
             swap(&arv[i], &arv[min]);
             i = min;
+            flag = 1;
         }
-    }while (i != min);
+    }while (flag);
 
 }
 int main(){

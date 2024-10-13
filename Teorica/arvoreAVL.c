@@ -1,114 +1,115 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<time.h>
-typedef struct noArvoreAVL_{
+typedef struct noArvore_{
     int valor;
-    struct noArvoreAVL_ *esq;
-    struct noArvoreAVL_ *dir;
+    struct noArvore_ *esq;
+    struct noArvore_ *dir;
     int altura;
-}noArvoreAVL;
-int alturaNo(noArvoreAVL *no){
+}noArvore;
+//Aloca memória para um nó já inicializando seus ponteiros e seu valor
+noArvore *criaNo(int valor){
+    noArvore *no = malloc(sizeof(noArvore));
+    no->esq = NULL;
+    no->dir = NULL;
+    no->valor = valor;
+    return no;
+}
+
+//Libera toda a memória alocada para a arvore
+void liberaArvore(noArvore *raiz){
+    if (!raiz)
+        return;
+    if (raiz->esq)
+        liberaArvore(raiz->esq);
+    if (raiz->dir)
+        liberaArvore(raiz->dir);
+    free(raiz);
+}
+
+/*Retorna a altura de um nó, se o nó for nulo, retorna 0
+Necessário para evitar acessos a ponteiros nulos*/
+int alturaNo(noArvore *no){
     return (no) ? no->altura : 0;
 }
-int calculaAltura(noArvoreAVL *no){
+
+//Calcula a altura de um nó em função da altura de seus filhos
+int calculaAltura(noArvore *no){
     int alturaDir = alturaNo(no->dir);
     int alturaEsq = alturaNo(no->esq);
+    //retorna a maior altura entre seus filhos mais um
     return (alturaDir >= alturaEsq) ? alturaDir+1 : alturaEsq+1;
 }
-int calculaBalance(noArvoreAVL *no){
+
+//Retorna o fator de balanceamento de um nó
+int calculaBalance(noArvore *no){
     int alturaDir = alturaNo(no->dir);
     int alturaEsq = alturaNo(no->esq);
     return alturaEsq-alturaDir;
 }
-noArvoreAVL *RSE(noArvoreAVL *raiz){
-    noArvoreAVL *direita = raiz->dir;
+
+//Rotaciona para esqueda a raíz de uma sub árvore, retorna a nova raíz
+noArvore *RSE(noArvore *raiz){
+    noArvore *direita = raiz->dir;
     raiz->dir = direita->esq;
     direita->esq = raiz;
+    //recalcula as novas alturas dos nós envolvidos na rotação
     raiz->altura = calculaAltura(raiz);
     direita->altura = calculaAltura(direita);
     return direita;
 }
 
-noArvoreAVL *RSD(noArvoreAVL *raiz){
-    noArvoreAVL *esquerda = raiz->esq;
+//Rotaciona para direita a raíz de uma sub árvore, retorna a nova raíz
+noArvore *RSD(noArvore *raiz){
+    noArvore *esquerda = raiz->esq;
     raiz->esq = esquerda->dir;
     esquerda->dir = raiz;
     raiz->altura = calculaAltura(raiz);
     esquerda->altura = calculaAltura(esquerda);
     return esquerda;
 }
-//+ vai pra esquerda, rotaciona direita
-//- vai para direita, rotaciona esquerda
-noArvoreAVL *rotaciona_insere(noArvoreAVL *raiz, int fator_balance){
-    if (fator_balance > 0){
-        int fator_balance_esq = calculaBalance(raiz->esq);
-        if (fator_balance_esq < 0)
-            raiz->esq = RSE(raiz->esq);
-        return RSD(raiz);
-    }
-    int fator_balance_dir = calculaBalance(raiz->dir);
-        if (fator_balance_dir > 0)
-            raiz->dir = RSD(raiz->dir);
-        return RSE(raiz);
-}
-noArvoreAVL *insereNoAVL(noArvoreAVL *raiz, noArvoreAVL *no){
-    if (!raiz){
-        no->altura = calculaAltura(no);
-        return no;
-    }
-    if (raiz->valor > no->valor)
-        raiz->esq = insereNoAVL(raiz->esq, no);
-    else
-        raiz->dir = insereNoAVL(raiz->dir, no);
 
-    int fator_balance = calculaBalance(raiz);
-    if (abs(fator_balance)>1)
-        raiz = rotaciona_insere(raiz, fator_balance);
-    raiz->altura = calculaAltura(raiz);
-
-    return raiz;
-}
-
-int pegaMaisDireira(noArvoreAVL *raiz){
+/*Retorna o valor do nó mais a direita da raíz de uma sub árvore, já 
+o removendo*/
+int pegaMaisDireira(noArvore *raiz){
     int valor;
-    if (raiz->dir->dir)
+    if (raiz->dir->dir) 
+        //vai descendo na árvore até encontrar o pai do nó mais a direita
         valor = pegaMaisDireira(raiz->dir);
     else{
-        noArvoreAVL *temp = raiz->dir;
+        //caso encontre, o nó mais a direita é removido
+        noArvore *temp = raiz->dir;
         raiz->dir = temp->esq;
         valor = temp->valor;
         free(temp);
     }
-    raiz->altura = calculaAltura(raiz);
+    //recalcula a altura dos nós em pós-ordem
+    raiz->altura = calculaAltura(raiz); 
     return valor;
 }
 
-noArvoreAVL *removeRaizAVL(noArvoreAVL *raiz){
-    noArvoreAVL *temp=raiz;
-    if (!raiz)
-        return raiz;
-    if (!raiz->dir)
-        raiz=raiz->esq;
-    else if (!raiz->esq)
-        raiz=raiz->dir;
-    else if (!raiz->esq->dir){
-        raiz->esq->dir = raiz->dir;
-        raiz = raiz->esq;
-        raiz->altura = calculaAltura(raiz);
-    }else{
-        raiz->valor = pegaMaisDireira(raiz->esq);
-        raiz->altura = calculaAltura(raiz);
-        return raiz;
+/*Rotaciona uma sub árvore de acordo com as regras de rotação na 
+inserção na AVL. Retorna a nova raíz*/
+noArvore *rotaciona_insere(noArvore *raiz, int fator_balance){
+    //caso fator de balanceamento for positivo, é necessário rotacionar para direita
+    if (fator_balance > 0){ 
+        //testa se é necessário fazer uma rotação dupla caso for um joelho
+        if (calculaBalance(raiz->esq) < 0)
+            raiz->esq = RSE(raiz->esq);
+        return RSD(raiz);
     }
-    free(temp);
-    return raiz; 
+    //caso contrário, testa se é um joelho e rotaciona para esquerda
+    if (calculaBalance(raiz->dir) > 0)
+        raiz->dir = RSD(raiz->dir);
+    return RSE(raiz);
 }
-/*necessário porque a regra para esconher os nós 
-da remoção é diferente da inserção*/
-noArvoreAVL *rotaciona_remove(noArvoreAVL *raiz){
-    noArvoreAVL *esquerda = raiz->esq;
-    noArvoreAVL *direita = raiz->dir;
-    //caso o filho de esquerda tenha o maior altura 
+
+/*Rotaciona uma sub árvore de acordo com as regras de rotação na 
+remoção na AVL. Retorna a nova raíz*/
+noArvore *rotaciona_remove(noArvore *raiz){
+    noArvore *esquerda = raiz->esq;
+    noArvore *direita = raiz->dir;
+    //caso o filho de esquerda tenha a maior altura 
     if (alturaNo(esquerda) > alturaNo(direita)){       
         //é realizada uma rotação dupla somente em caso obrigatório
         if (alturaNo(esquerda->esq) < alturaNo(esquerda->dir)) 
@@ -121,8 +122,69 @@ noArvoreAVL *rotaciona_remove(noArvoreAVL *raiz){
             raiz->dir = RSD(direita);
         return RSE(raiz);
     }
+    /*caso os filhos possuem niveis iguais, é priorizado uma rotação simples
+    (rotação no caminho esquerda esquerda ou direita direita)*/
+    if (alturaNo(esquerda->esq) > alturaNo(esquerda->dir))
+        return RSD(raiz);
+
+    //é realizada uma rotação dupla somente em caso obrigatório
+    if (alturaNo(direita->esq) > alturaNo(direita->dir))
+        raiz->dir = RSD(direita); 
+    return RSE(raiz);    
 }
-noArvoreAVL *removeNoAVL(noArvoreAVL *raiz, int valor){
+
+
+
+//Insere um nó na árvore AVL já rotacionando caso necessário
+noArvore *insereNoAVL(noArvore *raiz, noArvore *no){
+    /*desce na árvore até chegar em uma folha, 
+    o novo nó será filho dessa folha*/
+    if (!raiz){
+        no->altura = calculaAltura(no);
+        return no;
+    }
+    if (raiz->valor > no->valor)
+        raiz->esq = insereNoAVL(raiz->esq, no);
+    else
+        raiz->dir = insereNoAVL(raiz->dir, no);
+
+    /*testa se é necessário realizar uma rotação e atualiza o nível do nó
+    em pós ordem, assim esse procedimento é realizado somente no caminho 
+    da inserção*/
+    int fator_balance = calculaBalance(raiz);
+    if (abs(fator_balance)>1)
+        raiz = rotaciona_insere(raiz, fator_balance);
+    raiz->altura = calculaAltura(raiz);
+    return raiz;
+}
+
+//Remove a raíz de uma sub árvore AVL
+noArvore *removeRaizAVL(noArvore *raiz){
+    if (!raiz) //teste para evitar o acesso a um ponteiro nulo
+        return raiz;
+
+    //trata as 3 exeções para a remoção da raíz
+    noArvore *temp=raiz;
+    if (!raiz->dir) //caso o filho a direita é nulo
+        raiz=raiz->esq;
+    else if (!raiz->esq) //caso o filho a esquerda é nulo
+        raiz=raiz->dir;
+    else if (!raiz->esq->dir){ //caso o filho a direita do filho a esquerda é nulo
+        raiz->esq->dir = raiz->dir;
+        raiz = raiz->esq;
+        raiz->altura = calculaAltura(raiz);
+
+    }else{ //caso normal
+        raiz->valor = pegaMaisDireira(raiz->esq);
+        raiz->altura = calculaAltura(raiz);
+        return raiz;
+    }
+    free(temp);
+    return raiz; 
+}
+
+//Remove um nó com o valor expecificado na árvore AVL já rotacionando caso necessário
+noArvore *removeNoAVL(noArvore *raiz, int valor){
     if (!raiz)
         return raiz;
     if (valor < raiz->valor)
@@ -131,17 +193,19 @@ noArvoreAVL *removeNoAVL(noArvoreAVL *raiz, int valor){
         raiz->dir = removeNoAVL(raiz->dir, valor);
     else
         raiz = removeRaizAVL(raiz);
-    
+        
+    /*testa se é necessário realizar uma rotação e atualiza o nível do nó
+    em pós ordem, assim esse procedimento é realizado somente no caminho 
+    da remoção*/
     if (raiz){
         if (abs(calculaBalance(raiz))>1)
             raiz = rotaciona_remove(raiz);
         raiz->altura = calculaAltura(raiz);
     }
-
     return raiz;   
 }
 
-void printTree(noArvoreAVL *raiz, int altura, FILE *arq) {
+void printTree(noArvore *raiz, int altura, FILE *arq) {
      if (!raiz) 
          return;
     printTree(raiz->dir, altura + 1, arq);
@@ -151,15 +215,6 @@ void printTree(noArvoreAVL *raiz, int altura, FILE *arq) {
     fprintf(arq, "%d\n", raiz->valor);
 
     printTree(raiz->esq, altura + 1, arq);
-}
-void liberaArvore(noArvoreAVL *raiz){
-    if (!raiz)
-        return;
-    if (raiz->esq)
-        liberaArvore(raiz->esq);
-    if (raiz->dir)
-        liberaArvore(raiz->dir);
-    free(raiz);
 }
 
 int main(int arqc, char *arqv[]){
@@ -179,11 +234,11 @@ int main(int arqc, char *arqv[]){
         valores[i]=valores[random];
         valores[random]=aux;
     }
-    noArvoreAVL *raiz=NULL, *no;
+    noArvore *raiz=NULL, *no;
     FILE *arq = fopen("saida_arvore.txt", "wt");
     
     for (int i=0; i<tam; i++){
-        no = malloc(sizeof(noArvoreAVL));
+        no = malloc(sizeof(noArvore));
         no->valor=valores[i];
         no->esq=NULL;
         no->dir=NULL;

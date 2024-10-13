@@ -1,7 +1,8 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-#include <stdio.h>
+#include<time.h>
+#include<stdio.h>
 
 // int main(int argc, char *argv[]) {
 //     if (argc > 0) { // Verifica se pelo menos o nome do programa foi passado
@@ -15,6 +16,6 @@
 // }
 
 int main(int argc, char *argv[]){
-    for (int i=0; i<argc; i++)
-        printf("%s\n", argv[i]);
+    printf("%d", 0<<1);
+    
 }

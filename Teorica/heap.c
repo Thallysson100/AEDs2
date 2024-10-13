@@ -1,64 +1,99 @@
 #include<stdlib.h>
 #include<stdio.h>
-#define tam 100
-typedef int heap[tam];
-int tam_atu=0;
-
+typedef struct vetor_{
+    size_t tam_alocado, tam;
+    int *elm;
+}vetor;
+vetor *iniciaVet(){
+    vetor *vet = malloc(sizeof(vetor));
+    vet->tam_alocado = 3;
+    vet->tam = 0;
+    vet->elm = malloc(3 * sizeof(int));
+    return vet;
+}
+void insereVet(vetor *vet, int valor){
+    size_t tam = vet->tam, tam_alocado = vet->tam_alocado;
+    if (tam >= tam_alocado){
+        //multiplicação inteira por um fator de 1+79/128 = 1.6171875 (aproximação da razão aurea)       
+        tam_alocado += ((tam_alocado<<6)+(tam_alocado<<4)-tam_alocado)>>7; 
+        vet->elm = realloc(vet->elm, tam_alocado * sizeof(int));
+        vet->tam_alocado = tam_alocado;
+    }    
+    vet->elm[tam] = valor;
+    vet->tam++;
+}
 void swap(int *a, int *b){
     int temp = *a;
     *a = *b;
     *b = temp;
 }
-int insereHeap(heap arv, int tam_atu, int valor){
-    if (tam_atu >= tam)
-        return -1;
+void insereHeap(vetor *heap, int valor){
 
-    tam_atu++;
-    int i = tam_atu-1;
-    arv[i] = valor;
+    insereVet(heap, valor); //insere o novo elemento no final do vetor
+
     /*sobe na arvore trocando todos os pai maiores que seus filhos
     ate achar um certo ou chegar na raiz*/
-    while (i!=0 && arv[pai(i)] > arv[i]){
-        swap(&arv[pai(i)], &arv[i]);
+    int i = heap->tam-1, pai = (i-1)>>1, *pontVetor = heap->elm;
+    while (i!=0 && pontVetor[pai] > pontVetor[i]){
+        swap(pontVetor + pai, pontVetor + i);
         i = (i-1)>>1; //i = pai do i
+        pai = (i-1)>>1; //atualiza o valor do pai
     }
-    return 0;
 }
-int removeHeap(heap arv, int tam_atu, int valor){
-    if (tam_atu <= 0)
+int removeHeap(vetor *heap){
+    size_t tam = heap->tam;
+    if (tam <= 0)
         return -1;
-    if (tam_atu == 1){
-        tam_atu--;
-        return arv[0];
-    }
-        
-    tam_atu--;
-    arv[0] = arv[tam_atu];
-    int esq, dir, min = 0, i = 0, flag;
+    heap->tam--;
+    if (tam == 1) //caso a heap possuir apenas um elemento
+        return heap->elm[0];
+    tam--;   
+    int *pontVet=heap->elm, min=0, flag=1;
+    pontVet[0] = pontVet[tam];//troca a raiz pelo último elemento  
     
-    do{
+    //desce na arvore trocando os filhos menores pelos pais 
+    size_t i=0, esq=1, dir=2;
+    while (flag && esq<tam && dir<tam){
         flag = 0;
-        esq = (i<<1)+1; //filho a esquerda de i
-        dir = (i<<1)+2; //flho a direita de i
-        if (arv[esq] < arv[i])
+        if (pontVet[esq] < pontVet[i])
             min = esq;
-        if (arv[dir] < arv[min])
+        if (pontVet[dir] < pontVet[min])
             min = dir;
         if (min != i){
-            swap(&arv[i], &arv[min]);
+            swap(pontVet + i, pontVet + min);
             i = min;
             flag = 1;
         }
-    }while (flag);
-
+        esq = (i<<1)+1; //filho a esquerda de i
+        dir = (i<<1)+2; //flho a direita de i
+    }
+    return pontVet[0];
+}
+void printHeap(vetor *heap, size_t i, int nivel){
+    if (i >= heap->tam)
+        return;
+    printHeap(heap, (i<<1)+2, nivel+1); //direita
+    for (int i=0; i<nivel; i++)
+        printf("    ");
+    printf("%d\n", heap->elm[i]);
+    printHeap(heap, (i<<1)+1, nivel+1); //esquerda
 }
 int main(){
-    heap arv;
-    for (int i=0; i<tam; i++)
-        arv[i] = -1;
-    
-
-
+    vetor *heap = iniciaVet();
+    for (int i=9; i>=0; i--){
+        insereHeap(heap, i);
+        printHeap(heap, 0, 0);
+        puts("--------------");
+    }
+    char op;
+    do{
+        op=getchar();
+        removeHeap(heap);
+        printHeap(heap, 0, 0);
+        puts("---------------");
+    }while(op!='s');
+    free(heap->elm);
+    free(heap);
 
     return 0;
 }

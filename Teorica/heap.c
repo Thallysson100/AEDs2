@@ -48,17 +48,42 @@ int removeHeap(vetor *heap){
     if (tam == 1) //caso a heap possuir apenas um elemento
         return heap->elm[0];
     tam--;   
-    int *pontVet=heap->elm, min=0, flag=1;
+    int *pontVet=heap->elm, flag=1, valEsq, valDir, valMin, aux, flag2;
     pontVet[0] = pontVet[tam];//troca a raiz pelo último elemento  
     
     //desce na arvore trocando os filhos menores pelos pais 
-    size_t i=0, esq=1, dir=2;
+    size_t i=0, esq=1, dir=2, min = 0;
+    /*Jeito normal:
     while (flag && esq<tam && dir<tam){
         flag = 0;
         if (pontVet[esq] < pontVet[i])
             min = esq;
         if (pontVet[dir] < pontVet[min])
             min = dir;
+        if (min != i){
+            swap(pontVet + i, pontVet + min);
+            i = min;
+            flag = 1;
+        }
+        esq = (i<<1)+1; //filho a esquerda de i
+        dir = (i<<1)+2; //flho a direita de i
+    }   
+    Jeito sem duas condições:*/
+    while (flag && esq<tam && dir<tam){
+        flag = 0;
+        valMin = pontVet[i];
+        valEsq = pontVet[esq];
+        valDir = pontVet[dir];
+        //encontra o índice do menor número sem usar condição
+        aux = (valMin+valEsq-abs(valMin-valEsq))>>1;
+        flag2 = !(valMin-aux); //1 quando igual, 0 caso contrário
+        min = (min&-flag2) + (esq&(flag2-1));
+
+        valMin = pontVet[min];
+
+        aux = (valMin+valDir-abs(valMin-valDir))>>1;
+        flag2 = !(valMin-aux);
+        min = (min&-flag2) + (dir&(flag2-1));
         if (min != i){
             swap(pontVet + i, pontVet + min);
             i = min;
@@ -87,10 +112,15 @@ int main(){
     }
     char op;
     do{
-        op=getchar();
+        puts("Digite s para sair ou qualquer coisa para remover");
+        scanf(" %c", &op);
         removeHeap(heap);
+        for (int i=0; i<heap->tam; i++)
+            printf("%d ", heap->elm[i]);
+        puts("\n----------------");    
         printHeap(heap, 0, 0);
         puts("---------------");
+          
     }while(op!='s');
     free(heap->elm);
     free(heap);

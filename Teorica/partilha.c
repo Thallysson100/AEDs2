@@ -42,7 +42,7 @@ arvPar *criaArvPar(vetPar vet[], int inf, int sup){
         raiz->valor = vet[inf].valor;
         raiz->parti = 0;
         raiz->esq = NULL;
-        raiz->esq = NULL;
+        raiz->dir = NULL;
     }
     return raiz;
 

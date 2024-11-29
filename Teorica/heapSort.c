@@ -8,20 +8,21 @@ void swap(int *a, int *b){
 void heapfy(int arr[], int n, int i){
     int esq = (i<<1)+1; //filho a esquerda de i
     int dir = (i<<1)+2;
-    int max=i, flag=1;
-    while (flag && (esq<n || dir<n)){
-        flag = 0;
+    int max=i, trocou=1;
+    while (trocou){
+        trocou = 0;
         if (esq<n && arr[esq] > arr[i])
             max = esq;
         if (dir<n && arr[dir] > arr[max])
             max = dir;
         if (max != i){
-            flag = 1;
+            trocou = 1;
             swap(arr + i, arr + max);
+            i = max;
         }
         esq = (i<<1)+1;
         dir = (i<<1)+2;
-        }
+    }
     
         
 }

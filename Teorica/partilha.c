@@ -13,7 +13,7 @@ typedef struct arvPar_{
 
 arvPar *criaArvPar(vetPar vet[], int inf, int sup){
     arvPar *raiz = malloc(sizeof(arvPar));
-    if (inf<sup){
+    if (inf!=sup){
         int ifreqmax=inf;   
         for (int i=inf; i<=sup; i++){
             if (vet[i].freq > vet[ifreqmax].freq)
@@ -38,7 +38,7 @@ arvPar *criaArvPar(vetPar vet[], int inf, int sup){
         
         raiz->esq = criaArvPar(vet, inf, mid);
         raiz->dir = criaArvPar(vet, mid+1, sup);
-    }else if (inf==sup){
+    }else{
         raiz->valor = vet[inf].valor;
         raiz->parti = 0;
         raiz->esq = NULL;

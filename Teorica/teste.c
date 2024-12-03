@@ -3,19 +3,37 @@
 #include<string.h>
 #include<time.h>
 #include<stdio.h>
+void printBin(int n){
+    for (int i=(sizeof(n)<<3)-1; i>=0; i--){
+        printf("%u", (n>>i)&1);
+    }
+    putchar('\n');
+}
+int chave_dobra(int chave, int TABLE_SIZE){
+	int aux, aux2, j;
+	if (chave<0) chave = -chave;
+    printBin(chave);
+	for (int i=sizeof(chave)<<2; chave>=TABLE_SIZE; i>>=1){
+        for (j=0; j<32-i; j++){
+            putchar(' ');
+        }
+        for (j=0; j<i>>1; j++){
+            putchar('-');
+        }
+        putchar(':');
+        for (;j<i-1; j++){
+            putchar(':');
+        }
 
-// int main(int argc, char *argv[]) {
-//     if (argc > 0) { // Verifica se pelo menos o nome do programa foi passado
-//         // Imprime o primeiro caractere do nome do programa
-//         printf("%c\n", argv[0][0]);
-//     } else {
-//         // Caso nenhum argumento seja passado
-//         printf("Nenhum argumento passado.\n");
-//     }
-//     return 0;
-// }
+        putchar('\n');
+		aux = chave>>i; //metade mais significativa
+		aux2 = chave & (1<<i)-1; //metade menos signifcativa
+		chave = aux^aux2; //soma considerando 1+1=0
+        printBin(chave);
+	}
+	return chave;
+}
 
 int main(int argc, char *argv[]){
-    printf("%d", 0<<1);
-    
+    printf("\n%u", chave_dobra(65698984, 100));
 }

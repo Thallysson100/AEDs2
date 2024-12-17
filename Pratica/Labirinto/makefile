@@ -1,5 +1,5 @@
 # Nome do projeto
-PROJ_NAME = TabelaHash
+PROJ_NAME = Proj_labirinto
 
 # Arquivos .c
 C_SOURCE = $(wildcard *.c)

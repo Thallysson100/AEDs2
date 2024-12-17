@@ -53,12 +53,12 @@ int removeHeap(vetor *heap){
     
     //desce na arvore trocando os filhos menores pelos pais 
     size_t i=0, esq=1, dir=2, min = 0;
-    /*Jeito normal:
-    while (flag && esq<tam && dir<tam){
+
+    while (flag){
         flag = 0;
-        if (pontVet[esq] < pontVet[i])
+        if (esq<tam  && pontVet[esq]<pontVet[i])
             min = esq;
-        if (pontVet[dir] < pontVet[min])
+        if (dir<tam && pontVet[dir]<pontVet[min])
             min = dir;
         if (min != i){
             swap(pontVet + i, pontVet + min);
@@ -68,30 +68,6 @@ int removeHeap(vetor *heap){
         esq = (i<<1)+1; //filho a esquerda de i
         dir = (i<<1)+2; //flho a direita de i
     }   
-    Jeito sem duas condições:*/
-    while (flag && esq<tam && dir<tam){
-        flag = 0;
-        valMin = pontVet[i];
-        valEsq = pontVet[esq];
-        valDir = pontVet[dir];
-        //encontra o índice do menor número sem usar condição
-        aux = (valMin+valEsq-abs(valMin-valEsq))>>1;
-        flag2 = !(valMin-aux); //1 quando igual, 0 caso contrário
-        min = (min&-flag2) + (esq&(flag2-1));
-
-        valMin = pontVet[min];
-
-        aux = (valMin+valDir-abs(valMin-valDir))>>1;
-        flag2 = !(valMin-aux);
-        min = (min&-flag2) + (dir&(flag2-1));
-        if (min != i){
-            swap(pontVet + i, pontVet + min);
-            i = min;
-            flag = 1;
-        }
-        esq = (i<<1)+1; //filho a esquerda de i
-        dir = (i<<1)+2; //flho a direita de i
-    }
     return pontVet[0];
 }
 void printHeap(vetor *heap, size_t i, int nivel){

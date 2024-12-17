@@ -1,5 +1,5 @@
 # Nome do projeto
-PROJ_NAME = TabelaHash
+PROJ_NAME = Projeto_Ordenacao
 
 # Arquivos .c
 C_SOURCE = $(wildcard *.c)

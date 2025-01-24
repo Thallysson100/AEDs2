@@ -1,5 +1,5 @@
 # Nome do projeto
-PROJ_NAME = Projeto_Ordenacao
+PROJ_NAME = Projeto_Ordenacao.exe
 
 # Arquivos .c
 C_SOURCE = $(wildcard *.c)
@@ -28,7 +28,7 @@ $(PROJ_NAME): $(OBJ)
 
 # Regra para limpar os arquivos gerados
 clean:
-	rm -rf *.o *.d *~ $(PROJ_NAME) $(PROJ_NAME).exe
+	rm -rf *.o *.d *~ $(PROJ_NAME)
 
 # Incluindo automaticamente as dependências geradas
 -include $(OBJ:.o=.d)

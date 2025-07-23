@@ -53,5 +53,5 @@ Mkfile.old
 dkms.conf
 
 *.json
-busca.c
-teste.c
+*busca.c
+*teste.c

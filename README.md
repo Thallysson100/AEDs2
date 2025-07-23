@@ -58,24 +58,24 @@ This repository is meant to consolidate implementations and applications of data
 `Teorica/`
 
 Focuses on fundamental structures and sorting algorithms, with standalone C implementations:
-  - Trees: Binary Trees, AVL Trees, Heaps, and Tries.    
-  - Linear Structures: Queues, stacks, and lists implemented in both array and linked forms.    
-  - Sorting: Classic algorithms like Merge Sort, Heap Sort, and Bubble Sort.    
-  - Hash Tables: Basic hash table implementation with separate hashing functions.
+  - `Trees`: Binary Trees, AVL Trees, Heaps, and Tries.    
+  - `Linear Structures`: Queues, stacks, and lists implemented in both array and linked forms.    
+  - `Sorting`: Classic algorithms like Merge Sort, Heap Sort, and Bubble Sort.    
+  - `Hash Tables`: Basic hash table implementation with separate hashing functions.
 
 `Pratica/`
 
 Contains small projects and problem-solving using the concepts:
 
-  - Maze Solver: A project for solving maze problem using backtracking.
-  - Tree Algorithms: Applied usage of AVL and BST trees with test cases.
-  - Sorting Project: Real-world inspired sorting application using CSV data.
+  - `Maze Solver`: A project for solving maze problem using backtracking.
+  - `Tree Algorithms`: Applied usage of AVL and BST trees with test cases.
+  - `Sorting Project`: Real-world inspired sorting application using CSV data.
 ## Requirements
    - C compiler (e.g. gcc)
    - A Unix-like environment is recommended for file handling
 
 ## Notes
-  - The code is in portuguese
+  - The code and the directories is in portuguese
   - Some filenames might contain typos (e.g., bubbleSorst.c).
   - Comments within the code (in Portuguese) explain implementation details.
 ## License

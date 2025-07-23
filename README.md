@@ -1,91 +1,82 @@
- #  Repositório de Algoritmos e Estruturas de Dados II (AEDS II)
+# Data Structures and Algorithms Projects
 
-Este repositório contém implementações de estruturas de dados clássicas e projetos práticos desenvolvidos durante a disciplina 
-de Algoritmos e Estruturas de Dados II (AEDS II).
+This repository is organized into two main sections:
 
-## Estrutura do Repositório
+- `Teorica/`: Contains theoretical implementations of data structures and algorithms.
+- `Pratica/`: Contains applied exercises and projects using the concepts learned.
+
+---
+
+## Directory Structure
 ```
 .
 ├── Teorica/
-│   ├── Árvores/
-│   │   ├── arvore.c                (Árvore binária básica)
-│   │   ├── arvoreAVL.c             (Árvore AVL balanceada)
-│   │   └── saida_arvore.txt        (Exemplo de saída)
-│   ├── TabelaHash/
-│   │   ├── TabelaHash.c            (Implementação principal)
-│   │   ├── hash.h                  (Definições)
-│   │   └── funcoes_hashing.c       (Funções de dispersão)
-│   ├── Ordenação/
+│   ├── Trees/
+│   │   ├── arvore.c                (Basic binary tree)
+│   │   ├── arvoreAVL.c             (Balanced AVL tree)
+│   │   ├── heap.c                  (Min-heap tree)
+│   │   ├── partilha.c              (Patricia trie)
+│   │   └── saida_arvore.txt        (Example output)
+│   ├── LinearStructures/
+│   │   ├── fila.c                  (Array-based queue)
+│   │   ├── fila_enc.c              (Linked queue)
+│   │   ├── pilha_encadeada.c       (Linked stack)
+│   │   ├── lista_simpl_encadeada.c (Singly linked list)
+│   │   └── vetorDinamico.c         (Dynamic array)
+│   ├── Sorting/
 │   │   ├── mergeSort.c             (Merge Sort)
 │   │   ├── heapSort.c              (Heap Sort)
-│   │   └── bubbleSorst.c           (Bubble Sort com typo)
-│   └── Estruturas Lineares/
-│       ├── pilha_encadeada.c       (Pilha dinâmica)
-│       ├── lista_simpl_encadeada.c (Lista encadeada)
-│       └── vetorDinamico.c         (Vetor redimensionável)
+│   │   └── bubbleSorst.c           (Bubble Sort with typo in name)
+│   └── HashTable/
+│       ├── TabelaHash.c            (Main implementation)
+│       ├── hash.h                  (Definitions)
+│       └── funcoes_hashing.c       (Hashing functions)
 │
 └── Pratica/
-    ├── Labirinto/
-    │   ├── labirinto.c             (Solução de labirintos)
-    │   ├── Proj_labirinto.c        (Main do projeto)
-    │   └── Labirintos/             (Mapas)
-    │       ├── labirinto1.txt      (Exemplo)
-    │       └── ...                 (labirinto2.txt, etc.)
-    ├── Árvores/
-    │   ├── funcoesBST.c            (Operações BST)
-    │   ├── funcoesAVL.c            (Balanceamento AVL)
-    │   └── instancias/             (Dados de teste)
-    │       ├── 1                   (Caso 1)
-    │       └── ...                 (2, 3, etc.)
-    └── Ordenacao/
-        ├── funcoesOrdenacao.c      (Algoritmos)
-        ├── Projeto_Ordenacao.c     (Aplicação)
-        └── jogadores.csv           (Dataset)
+    ├── Maze/
+    │   ├── labirinto.c             (Maze solving logic)
+    │   ├── Proj_labirinto.c        (Project main file)
+    │   └── Mazes/
+    │       ├── labirinto1.txt      (Example maze)
+    │       └── ...                 (Additional mazes)
+    ├── Trees/
+    │   ├── funcoesBST.c            (Binary Search Tree operations)
+    │   ├── funcoesAVL.c            (AVL balancing operations)
+    │   └── instances/
+    │       ├── 1                   (Test case 1)
+    │       └── ...                 (Additional cases)
+    └── Sorting/
+        ├── funcoesOrdenacao.c      (Sorting algorithms)
+        ├── Projeto_Ordenacao.c     (Sorting application)
+        └── jogadores.csv           (Sample dataset)
 ```
-## 1. Códigos Teóricos (./Teorica/)
-Implementações didáticas de estruturas de dados e algoritmos:
-### Árvores
-  - arvore.c → Árvore binária básica.
-  - arvoreAVL.c → Árvore AVL (com balanceamento).
-  - aida_arvore.txt → Exemplo de saída de um teste com árvores.
-### Tabela Hash
-  - TabelaHash/ → Implementação completa com:
-  - Funções de hashing (funcoes_hashing.c).
-  - Tabela dinâmica (TabelaHash.c).
-### Ordenação
-  - mergeSort.c → Algoritmo Merge Sort.
-  - heapSort.c → Heap Sort com estrutura de heap.
-  - bubbleSorst.c → Provavelmente Bubble Sort (typo no nome).
-### Outras Estruturas
-  - pilha_encadeada.c → Pilha com alocação dinâmica.
-  - lista_simpl_encadeada.c → Lista simplesmente encadeada.
-  - vetorDinamico.c → Vetor redimensionável.
 
-## 2. Projetos Práticos (./Pratica/)
+## About the Repository
 
-Trabalhos realizados na parte prática da disciplina
-### Labirinto
-  Resolução automática de labirintos (arquivos .txt representam mapas).
-  - Arquivos principais:
-    * labirinto.c → Lógica de navegação.
-    * Proj_labirinto.c → Possível main do projeto.
-        
-### Árvores (BST/AVL)
-  Manipulação de árvores binárias de busca (BST) e AVL.
-  - Destaques:
-    * funcoesBST.c → Operações em BST.
-    * funcoesAVL.c → Rotações e balanceamento.
-    * Pasta instancias/ → Casos de teste.
+This repository is meant to consolidate implementations and applications of data structures and algorithms. It is split into two main parts:
 
-### Ordenação de Dados
-  Implementação de algoritmos de ordenação sobre um dataset (jogadores.csv).
-  - Arquivos:
-    * funcoesOrdenacao.c → Algoritmos (MergeSort, QuickSort, etc.).
-    * Projeto_Ordenacao.c → Aplicação principal.
-        
-## Como Utilizar
-  ### Compilação:
-  Em projetos com múlpliplos arquivos fontes, use os Makefiles disponíveis em cada pasta (ex.: Pratica/Arvore/makefile) com o comando:
+`Teorica/`
 
-    make
-    
+Focuses on fundamental structures and sorting algorithms, with standalone C implementations:
+  - Trees: Binary Trees, AVL Trees, Heaps, and Tries.    
+  - Linear Structures: Queues, stacks, and lists implemented in both array and linked forms.    
+  - Sorting: Classic algorithms like Merge Sort, Heap Sort, and Bubble Sort.    
+  - Hash Tables: Basic hash table implementation with separate hashing functions.
+
+`Pratica/`
+
+Contains small projects and problem-solving using the concepts:
+
+  - Maze Solver: A project for solving maze problem using backtracking.
+  - Tree Algorithms: Applied usage of AVL and BST trees with test cases.
+  - Sorting Project: Real-world inspired sorting application using CSV data.
+## Requirements
+   - C compiler (e.g. gcc)
+   - A Unix-like environment is recommended for file handling
+
+## Notes
+  - The code is in portuguese
+  - Some filenames might contain typos (e.g., bubbleSorst.c).
+  - Comments within the code (in Portuguese) explain implementation details.
+## License
+  This project is for educational purposes and does not currently include a specific license.
